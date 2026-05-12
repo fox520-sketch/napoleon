@@ -1,0 +1,23 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /rooms/{roomId} {
+      allow read: if request.auth != null;
+
+      // 這份規則適合朋友房與課堂示範，搭配匿名登入即可玩。
+      // 真正公開商用前，建議再加入 App Check、房主權限、欄位驗證與速率限制。
+      allow create: if request.auth != null
+        && request.resource.data.allowedUids.hasAny([request.auth.uid]);
+
+      allow update: if request.auth != null
+        && (
+          resource.data.allowedUids.hasAny([request.auth.uid]) ||
+          request.resource.data.allowedUids.hasAny([request.auth.uid])
+        );
+
+      allow delete: if request.auth != null
+        && resource.data.hostUid == request.auth.uid;
+    }
+  }
+}
