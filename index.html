@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>拿破崙與秘書｜單人離線・Firebase 多人對戰</title>
+  <meta name="description" content="台式拿破崙與秘書單人離線與 Firebase 多人房間版，可部署到 GitHub Pages。" />
+  <meta name="theme-color" content="#087ea4" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="拿破崙與秘書" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <a class="skip-link" href="#connectView">跳到主要內容</a>
+    <a class="site-home-link" href="https://fox520-sketch.github.io/fox/" target="_blank" rel="noopener" aria-label="前往狐狸網路遊戲之家">
+      <span class="site-home-icon" aria-hidden="true">🦊</span>
+      <span>狐狸網路遊戲之家</span>
+    </a>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Taiwan Napoleon & Secretary</p>
+        <h1>拿破崙與秘書</h1>
+        <p class="subtitle">單人離線・Firebase 多人房間・5 人對戰・不足可由電腦補位</p>
+      </div>
+      <div class="top-actions">
+        <label class="theme-picker" for="themeSelect">
+          <span>主題</span>
+          <select id="themeSelect" aria-label="選擇主題風格">
+            <option value="auto">自動（跟隨系統）</option>
+            <option value="ocean">海洋風</option>
+            <option value="eye-care">護眼風</option>
+            <option value="e-ink">電子紙風</option>
+            <option value="forest">森林風</option>
+            <option value="grassland">草原風</option>
+            <option value="sakura">櫻花風</option>
+            <option value="twilight">暮光風</option>
+          </select>
+        </label>
+        <label class="top-check" for="hintToggle"><input id="hintToggle" type="checkbox" /> 玩家提示</label>
+        <label class="top-check" for="soundToggle"><input id="soundToggle" type="checkbox" /> 音效</label>
+        <label class="top-check" for="vibrationToggle"><input id="vibrationToggle" type="checkbox" /> 震動</label>
+        <button id="btnOnboarding" class="ghost" type="button">新手導覽</button>
+        <button id="btnRules" class="ghost">玩法摘要</button>
+        <button id="btnLeave" class="ghost hidden">離開房間</button>
+      </div>
+    </header>
+
+    <section id="connectView" class="card shell-card">
+      <div class="hero">
+        <div>
+          <span class="pill">GitHub Pages Ready</span>
+          <h2>開始遊戲</h2>
+          <p>可直接單人離線開局，或連線 Firebase 建立多人房間。單人模式不需要建立新房，會自動補 4 位電腦。</p>
+        </div>
+        <div class="wave">♠ ♥ ♦ ♣</div>
+      </div>
+
+      <div class="public-start-card" aria-label="快速開始">
+        <div class="public-start-head">
+          <div>
+            <p class="eyebrow">Quick Start</p>
+            <h3>快速開始</h3>
+            <p class="hint compact">不知道怎麼選？用下面三個入口即可。新手建議先開玩家提示；多人則先連線 Firebase。</p>
+          </div>
+          <button id="btnOpenReleaseNotes" class="ghost" type="button">本版更新</button>
+          <button id="btnOpenReleaseChecklist" class="ghost" type="button">正式版測試</button>
+          <button id="btnOpenTutorial" class="ghost" type="button">玩法教學</button>
+          <button id="btnOpenPublicStatusTop" class="ghost" type="button">公開狀態</button>
+        </div>
+        <div class="quick-mode-grid">
+          <button id="btnQuickBeginner" class="quick-mode" type="button">
+            <b>新手直接玩</b>
+            <span>套用新手休閒＋玩家提示，立即離線開局。</span>
+          </button>
+          <button id="btnQuickStandard" class="quick-mode" type="button">
+            <b>標準單人局</b>
+            <span>標準台式規則與 AI，直接開始一局。</span>
+          </button>
+          <button id="btnQuickMultiplayer" class="quick-mode" type="button">
+            <b>邀請朋友</b>
+            <span>跳到多人區，連線 Firebase 後建立房間與 QR Code。</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="public-share-card" aria-label="公開版管理與分享">
+        <div>
+          <h3>公開版管理</h3>
+          <p class="hint">要分享給朋友或確認部署狀態時，先用這裡複製公開網址、介紹文，或查看目前 PWA / Firebase / 快取狀態。</p>
+        </div>
+        <div class="tool-actions">
+          <button id="btnCopyPublicLink" class="ghost" type="button">複製公開網址</button>
+          <button id="btnCopyPublicIntro" class="ghost" type="button">分享介紹文</button>
+          <button id="btnOpenPublicStatus" class="ghost" type="button">檢查公開狀態</button>
+        </div>
+      </div>
+
+      <div class="experience-card" aria-label="手機手感、音效與分享素材">
+        <div>
+          <h3>體驗細節</h3>
+          <p class="hint">手機覺得牌太小時可開大牌模式；也可測試音效/震動，或複製公開分享素材。</p>
+        </div>
+        <div class="experience-controls">
+          <label class="check compact-check"><input id="touchComfortToggle" type="checkbox" /> 手機大牌模式</label>
+          <label class="mini-field sound-profile-field">
+            <span>音效風格</span>
+            <select id="soundProfile">
+              <option value="soft">柔和</option>
+              <option value="classic">經典</option>
+              <option value="arcade">遊戲感</option>
+            </select>
+          </label>
+          <button id="btnTestSound" class="ghost" type="button">測試音效</button>
+          <button id="btnTestVibration" class="ghost" type="button">測試震動</button>
+          <button id="btnOpenShareKit" class="ghost" type="button">分享素材</button>
+        </div>
+      </div>
+
+      <div class="quick-start">
+        <div>
+          <h3>單人離線</h3>
+          <p class="hint">不用登入、不用房號，直接以你加 4 位電腦開始。本局只在此裝置進行。</p>
+        </div>
+        <div class="quick-actions">
+          <label class="mini-field">
+            <span>設定預設</span>
+            <select id="offlinePreset">
+              <option value="standard" selected>標準台式</option>
+              <option value="beginner">新手休閒</option>
+              <option value="challenge">高手挑戰</option>
+              <option value="napFriendly">拿破崙友善</option>
+              <option value="defStrong">聯合國強化</option>
+              <option value="test">AI 測試用</option>
+            </select>
+          </label>
+          <label class="mini-field">
+            <span>電腦難度</span>
+            <select id="offlineDifficulty">
+              <option value="5">5 輕鬆</option>
+              <option value="10" selected>10 一般</option>
+              <option value="15">15 困難</option>
+              <option value="20">20 專家</option>
+            </select>
+          </label>
+          <label class="mini-field">
+            <span>AI 風格</span>
+            <select id="offlineAiStyle">
+              <option value="varied" selected>各有個性</option>
+              <option value="balanced">穩健均衡</option>
+              <option value="conservative">保守少失誤</option>
+              <option value="aggressive">積極搶頭</option>
+              <option value="support">隊友配合</option>
+              <option value="blocker">防守擋約</option>
+              <option value="expert">高手綜合</option>
+            </select>
+          </label>
+          <button id="btnStartOffline" class="primary">單人離線開始</button>
+        </div>
+      </div>
+
+      <div class="ai-test-card">
+        <div>
+          <h3>AI 健康檢查</h3>
+          <p class="hint">快速跑全電腦測試，檢查送頭、浪費控制牌、叫牌穩定度與成約分布。會使用上方的難度與 AI 風格。</p>
+          <div class="ai-test-controls">
+            <label class="mini-field">
+              <span>測試局數</span>
+              <select id="aiTestRounds">
+                <option value="6" selected>6 局快速</option>
+                <option value="12">12 局標準</option>
+                <option value="24">24 局穩定</option>
+                <option value="36">36 局高信度</option>
+              </select>
+            </label>
+            <label class="mini-field">
+              <span>平衡目標</span>
+              <select id="aiBalanceTarget">
+                <option value="normal" selected>標準 45–60%</option>
+                <option value="hard-nap">拿破崙挑戰 35–50%</option>
+                <option value="easy-nap">拿破崙友善 55–70%</option>
+              </select>
+            </label>
+          </div>
+          <p id="aiTestStatus" class="ai-test-status">尚未執行測試。</p>
+        </div>
+        <button id="btnRunAiTest" class="ghost">執行 AI 測試</button>
+      </div>
+
+      <div class="tool-card">
+        <div>
+          <h3>系統測試工具</h3>
+          <p class="hint">檢查版本、PWA 快取、Service Worker、Firebase 狀態、瀏覽器功能與目前設定，方便確認手機是否吃到舊版。</p>
+          <p id="diagnosticStatus" class="diagnostic-status">尚未執行系統測試。</p>
+        </div>
+        <button id="btnRunDiagnostics" class="ghost">執行系統測試</button>
+      </div>
+
+      <div class="tool-card release-test-card">
+        <div>
+          <h3>正式版測試清單</h3>
+          <p class="hint">更新後可依序檢查單人、多人、PWA、AI 健康檢查與手機版面，避免公開後才發現壞掉。</p>
+          <p id="releaseChecklistStatus" class="diagnostic-status">建議部署後跑一次。</p>
+        </div>
+        <div class="tool-actions">
+          <button id="btnOpenReleaseChecklist2" class="ghost" type="button">打開測試清單</button>
+          <button id="btnOpenTutorial2" class="ghost" type="button">完整玩法教學</button>
+        </div>
+      </div>
+
+      <div class="tool-card stats-card">
+        <div>
+          <h3>本機統計與維護</h3>
+          <p class="hint">只記錄在這台裝置，用來追蹤單人與多人局勝敗、分數、拿破崙/聯合國表現，也可匯出設定和錯誤回報。</p>
+          <div id="localStatsSummary" class="stats-summary" aria-live="polite">尚無本機統計。</div>
+          <div id="achievementSummary" class="achievement-summary" aria-live="polite"></div>
+        </div>
+        <div class="tool-actions">
+          <button id="btnShowLocalStats" class="ghost" type="button">更新統計</button>
+          <button id="btnShareStats" class="ghost" type="button">分享戰績</button>
+          <button id="btnShareAchievements" class="ghost" type="button">分享成就</button>
+          <button id="btnExportLocalData" class="ghost" type="button">匯出資料</button>
+          <button id="btnImportLocalData" class="ghost" type="button">還原資料</button>
+          <button id="btnCopyErrorReport" class="ghost" type="button">複製錯誤回報</button>
+          <button id="btnCopySupportBundle" class="ghost" type="button">複製維護包</button>
+          <button id="btnClearPwaCache" class="ghost" type="button">清除舊快取</button>
+          <button id="btnResetLocalData" class="ghost danger-ghost" type="button">重設本機資料</button>
+        </div>
+      </div>
+
+      <div class="tool-card accessibility-card">
+        <div>
+          <h3>操作提示</h3>
+          <p class="hint">鍵盤快捷鍵：<b>H</b> 玩家提示、<b>L</b> 牌局紀錄、<b>T</b> 主題切換、<b>R</b> 結算後開啟回放。手機可點灰色牌查看不能出的原因。</p>
+        </div>
+      </div>
+
+      <h3 class="section-title">多人線上</h3>
+
+      <div class="grid two">
+        <label class="field">
+          <span>你的暱稱</span>
+          <input id="playerName" maxlength="12" placeholder="例如：Fox" />
+        </label>
+        <label class="field">
+          <span>房號</span>
+          <input id="roomCode" maxlength="8" placeholder="留空可建立新房" />
+        </label>
+      </div>
+
+      <div class="config-note">
+        <b>Firebase 已內建</b>
+        <span>專案：napoleon-secretary-3。若連線失敗，請確認 Firebase Anonymous 登入、Realtime Database 規則，以及 GitHub Pages 授權網域。</span>
+      </div>
+
+      <div class="button-row">
+        <button id="btnConnect" class="primary">連線 Firebase</button>
+        <button id="btnCreateRoom" class="primary" disabled>建立新房</button>
+        <button id="btnJoinRoom" class="ghost" disabled>加入房間</button>
+        <button id="btnJoinSpectator" class="ghost" disabled>觀戰加入</button>
+      </div>
+      <p id="connectStatus" class="hint">單人離線可直接開始；多人模式請先連線 Firebase。觀戰加入可在房間已滿或已開局時旁觀。</p>
+    </section>
+
+    <section id="lobbyView" class="card hidden">
+      <div class="lobby-header">
+        <div>
+          <p class="eyebrow">房間</p>
+          <h2 id="lobbyRoomCode">----</h2>
+          <p id="lobbyShare" class="hint"></p>
+          <div id="lobbyRoomStatus" class="room-status-card" aria-live="polite"></div>
+        </div>
+        <div class="invite-card" aria-label="房間邀請資訊">
+          <img id="inviteQr" class="qr-code" alt="加入房間 QR Code" />
+          <div class="invite-meta">
+            <p class="eyebrow">邀請</p>
+            <p class="hint compact">朋友掃描 QR Code 或開啟連結即可帶入房號。</p>
+            <p id="inviteLinkText" class="invite-url"></p>
+            <button id="btnCopyLink" class="ghost">複製邀請連結</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid lobby-grid">
+        <div class="panel">
+          <h3>座位</h3>
+          <div id="lobbySeats" class="seat-list"></div>
+          <div class="button-row host-only hidden">
+            <button id="btnAddBot" class="ghost">補一位電腦</button>
+            <button id="btnRemoveBot" class="ghost">移除電腦</button>
+          </div>
+          <div class="host-tools host-only hidden">
+            <h4>房主工具</h4>
+            <p class="hint compact">朋友斷線時，可把離線真人座位交給電腦接手；公開測試結束可關閉房間。</p>
+            <div class="button-row">
+              <button id="btnTakeOverOfflineLobby" class="ghost" type="button">離線玩家改電腦</button>
+              <button id="btnExtendRoomLobby" class="ghost" type="button">延長 24 小時</button>
+              <button id="btnCopyRoomMaintenanceLobby" class="ghost" type="button">複製維護摘要</button>
+              <button id="btnCloseRoomLobby" class="ghost danger-ghost" type="button">關閉房間</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>規則設定</h3>
+          <div class="settings-grid">
+            <label class="field">
+              <span>規則預設</span>
+              <select id="lobbyPreset">
+                <option value="standard" selected>標準台式</option>
+                <option value="beginner">新手休閒</option>
+                <option value="challenge">高手挑戰</option>
+                <option value="napFriendly">拿破崙友善</option>
+                <option value="defStrong">聯合國強化</option>
+                <option value="test">AI 測試用</option>
+              </select>
+              <small>套用後會自動調整難度、AI 風格與常用規則。</small>
+            </label>
+            <label class="field">
+              <span>電腦難度 <b id="difficultyLabel">10</b> / 20</span>
+              <input id="difficulty" type="range" min="1" max="20" value="10" />
+              <small>難度越高，電腦越會估牌、保頭、餵隊友。</small>
+            </label>
+            <label class="field">
+              <span>底牌頭處理</span>
+              <select id="buriedMode">
+                <option value="addContract" selected>公開棄頭，張數加到成約</option>
+                <option value="defenders">棄頭結算視為防家取得</option>
+                <option value="ignore">只顯示，不調整成約</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>首攻規則</span>
+              <select id="leadMode">
+                <option value="next" selected>拿破崙下家首攻</option>
+                <option value="napoleon">拿破崙首攻</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>叫牌王牌選項</span>
+              <select id="trumpMode">
+                <option value="suitOnly" selected>四花色叫牌（♣ ♦ ♥ ♠）</option>
+                <option value="allowNoTrump">允許無王叫牌</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>AI 風格模式</span>
+              <select id="aiStyle">
+                <option value="varied" selected>各有個性：每位電腦有不同打法</option>
+                <option value="balanced">穩健均衡：少冒險、重視安全頭</option>
+                <option value="conservative">保守少失誤：不亂叫、不亂送頭</option>
+                <option value="aggressive">積極搶頭：高壓進攻、敢用控制牌</option>
+                <option value="support">隊友配合：更重視餵頭與製造切牌</option>
+                <option value="blocker">防守擋約：聯合國阻止成約更積極</option>
+                <option value="expert">高手綜合：依局勢自動切換策略</option>
+              </select>
+              <small>影響電腦叫牌、出牌、餵隊友、擋約與保留控制牌的偏好。</small>
+            </label>
+            <label class="check"><input id="jokerLowLast3" type="checkbox" checked /> 末三輪鬼牌變小</label>
+            <label class="check"><input id="summonJokers" type="checkbox" checked /> 前三輪王牌 2/3 可召大／小鬼</label>
+            <label class="check"><input id="allowSelfSecretary" type="checkbox" /> 允許拿破崙指定自己手牌當秘書（獨裁）</label>
+            <label class="check"><input id="showAiThoughts" type="checkbox" checked /> 難度 16 以上顯示 AI 思路紀錄</label>
+          </div>
+          <button id="btnStartGame" class="primary big host-only hidden">開始對戰</button>
+          <p id="lobbyNotice" class="hint"></p>
+        </div>
+      </div>
+    </section>
+
+    <main id="gameView" class="game hidden">
+      <aside class="left-panel panel">
+        <button id="btnGameExit" class="ghost game-exit">返回主畫面</button>
+        <div class="phase-card">
+          <p class="eyebrow">目前階段</p>
+          <h2 id="phaseTitle">準備中</h2>
+          <p id="phaseHelp">等待房主開始。</p>
+        </div>
+        <div class="contract">
+          <h3>合約</h3>
+          <div id="contractInfo">尚未叫牌</div>
+        </div>
+        <div class="scoreboard">
+          <h3>分數</h3>
+          <div id="scoreList"></div>
+        </div>
+        <div id="actionPanel" class="actions"></div>
+        <div id="gameRoomStatus" class="room-status-card game-room-status hidden" aria-live="polite"></div>
+        <div id="gameHostTools" class="host-tools host-only hidden">
+          <h4>多人維護</h4>
+          <p class="hint compact">若真人斷線卡住，房主可讓電腦接手離線座位。</p>
+          <div class="button-row">
+            <button id="btnTakeOverOfflineGame" class="ghost" type="button">接管離線玩家</button>
+            <button id="btnCloseRoomGame" class="ghost danger-ghost" type="button">關閉房間</button>
+          </div>
+        </div>
+        <div id="playerTips" class="player-tips hidden"></div>
+      </aside>
+
+      <section class="table-wrap">
+        <div id="table" class="table">
+          <div id="seat0" class="seat seat-0"></div>
+          <div id="seat1" class="seat seat-1"></div>
+          <div id="seat2" class="seat seat-2"></div>
+          <div id="seat3" class="seat seat-3"></div>
+          <div id="seat4" class="seat seat-4"></div>
+          <div id="play0" class="seat-play play-0"></div>
+          <div id="play1" class="seat-play play-1"></div>
+          <div id="play2" class="seat-play play-2"></div>
+          <div id="play3" class="seat-play play-3"></div>
+          <div id="play4" class="seat-play play-4"></div>
+          <div class="center">
+            <div id="trickArea" class="trick-area"></div>
+            <div id="kittyArea" class="kitty-area"></div>
+          </div>
+          <div id="tableTrump" class="table-trump hidden" aria-live="polite"></div>
+          <div id="tableTeamHeads" class="table-heads hidden" aria-live="polite"></div>
+        </div>
+        <div class="hand-panel panel">
+          <div class="hand-header">
+            <div>
+              <h3>你的手牌</h3>
+              <p id="handHint">依目前階段操作。</p>
+            </div>
+            <div id="handCount" class="pill"></div>
+          </div>
+          <div id="hand" class="hand"></div>
+        </div>
+      </section>
+
+      <aside class="right-panel panel log-panel">
+        <div class="log-header">
+          <h3>牌局紀錄</h3>
+          <button id="btnToggleLog" class="ghost log-toggle" type="button">顯示紀錄</button>
+        </div>
+        <p id="logSummary" class="log-summary">牌局紀錄已隱藏。</p>
+        <div id="log" class="log"></div>
+      </aside>
+    </main>
+
+
+
+    <dialog id="onboardingDialog" class="onboarding-dialog">
+      <div class="dialog-body onboarding-body">
+        <button id="closeOnboarding" class="close" type="button">×</button>
+        <p class="eyebrow">快速導覽</p>
+        <h2>第一次玩？照這 4 步開始</h2>
+        <div class="onboarding-steps">
+          <article><b>1</b><div><h3>先選模式</h3><p>單人離線可直接開始；多人請先連線 Firebase，再建立或加入房間。</p></div></article>
+          <article><b>2</b><div><h3>叫牌看「數字＋花色」</h3><p>例如 11 黑桃。花色大小依 ♣ < ♦ < ♥ < ♠；最高叫品且其他 4 家 Pass 後，叫到的人就是拿破崙。</p></div></article>
+          <article><b>3</b><div><h3>開啟玩家提示</h3><p>上方「玩家提示」會在叫牌、換底牌、選秘書與出牌時給建議；手機點灰色牌也會說明不能出的原因。</p></div></article>
+          <article><b>4</b><div><h3>結束後看回放</h3><p>本局結算可打開牌局回放，逐墩看誰吃、幾頭、哪一墩是關鍵。</p></div></article>
+        </div>
+        <div class="button-row dialog-actions">
+          <button id="btnStartAfterGuide" class="primary" type="button">知道了</button>
+          <button id="btnEnableHintsFromGuide" class="ghost" type="button">開啟玩家提示</button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="importDataDialog" class="backup-dialog">
+      <div class="dialog-body backup-body">
+        <button id="closeImportData" class="close" type="button">×</button>
+        <p class="eyebrow">備份 / 還原</p>
+        <h2>貼上本機資料 JSON</h2>
+        <p class="hint">可貼上「匯出資料」複製的 JSON，還原主題、玩家提示、音效/震動、暱稱、統計與錯誤紀錄。這只會影響本機，不會改 Firebase 房間。</p>
+        <textarea id="importDataText" class="backup-textarea" spellcheck="false" placeholder="在這裡貼上 JSON"></textarea>
+        <div class="button-row dialog-actions">
+          <button id="btnApplyImportData" class="primary" type="button">還原資料</button>
+          <button id="btnPasteCurrentBackup" class="ghost" type="button">填入目前備份</button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="releaseNotesDialog" class="release-dialog">
+      <div class="dialog-body release-body">
+        <button id="closeReleaseNotes" class="close" type="button">×</button>
+        <p class="eyebrow">版本更新</p>
+        <h2>AI V40：拿破崙軍頭數顯示修正</h2>
+        <ul class="release-list">
+          <li><b>手機手感：</b>新增手機大牌模式，讓手牌與出牌按鈕更容易點選。</li>
+          <li><b>音效細節：</b>新增柔和、經典、遊戲感三種音效風格，並加入音效/震動測試。</li>
+          <li><b>分享素材：</b>新增短版邀請、完整介紹與狐狸首頁素材，可一鍵複製。</li>
+          <li><b>公開版管理：</b>保留公開狀態、維護包、正式版測試清單、玩法教學、觀戰、成就與 AI 健康檢查。</li>
+          <li><b>結算修正：</b>拿破崙未達標時，聯合國頭數會正確顯示，不再出現 0 頭。</li>
+          <li><b>快取更新：</b>版本、Service Worker 與公開版文件更新為 V40。</li>
+        </ul>
+        <div class="button-row dialog-actions">
+          <button id="btnOpenTutorialFromRelease" class="ghost" type="button">玩法教學</button>
+          <button id="btnCopySupportBundleInDialog" class="ghost" type="button">複製維護包</button>
+          <button id="btnClearPwaCacheInDialog" class="ghost" type="button">清除舊快取</button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="releaseChecklistDialog" class="checklist-dialog">
+      <div class="dialog-body checklist-body">
+        <button id="closeReleaseChecklist" class="close" type="button">×</button>
+        <p class="eyebrow">正式版測試</p>
+        <h2>公開前測試清單</h2>
+        <p class="hint">每次覆蓋 GitHub Pages 後，建議照順序跑一次。勾選結果只存在本機，可複製後貼到維護紀錄。</p>
+        <div id="releaseChecklist" class="release-checklist"></div>
+        <div class="button-row dialog-actions">
+          <button id="btnCopyChecklistResult" class="ghost" type="button">複製測試結果</button>
+          <button id="btnResetChecklist" class="ghost" type="button">重設勾選</button>
+          <button id="btnChecklistDiagnostics" class="primary" type="button">執行系統測試</button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="tutorialDialog" class="tutorial-dialog">
+      <div class="dialog-body tutorial-body">
+        <button id="closeTutorial" class="close" type="button">×</button>
+        <p class="eyebrow">玩法教學</p>
+        <h2>拿破崙與秘書完整教學</h2>
+        <div class="tutorial-grid">
+          <article><h3>1. 基本牌局</h3><p>5 人遊戲，使用 54 張牌，每人 10 張，4 張底牌。A/K/Q/J 是頭牌，共 16 頭；本局目標就是搶到足夠頭數。</p></article>
+          <article><h3>2. 叫牌</h3><p>叫品為「數字＋花色」，例如 11 黑桃。數字代表拿破崙軍需要的頭數，同數字花色大小依 ♣ &lt; ♦ &lt; ♥ &lt; ♠；若開啟無王，無王最大。</p></article>
+          <article><h3>3. 拿破崙與秘書</h3><p>最高叫品者成為拿破崙，該花色為王牌。拿破崙拿底牌後蓋牌，再指定一張秘書牌；持有者暗中成為隊友，打出秘書牌時公開。</p></article>
+          <article><h3>4. 出牌大小</h3><p>秘書牌最大，其後通常為大鬼、小鬼、王牌、首引花色。若啟用末三輪鬼牌變小，鬼牌後期威力下降；前三輪王牌 2/3 可召鬼。</p></article>
+          <article><h3>5. 勝負</h3><p>拿破崙軍吃到成約頭數即勝；否則聯合國勝。秘書未公開前，牌桌只顯示拿破崙本人頭數，避免洩漏身分。</p></article>
+          <article><h3>6. 新手建議</h3><p>先開「玩家提示」，叫牌不要太貪；出牌時優先確認是否必須跟牌，隊友穩吃時才安全餵頭，對手吃墩時少送 A/K/Q/J。</p></article>
+        </div>
+        <div class="button-row dialog-actions">
+          <button id="btnTutorialEnableHints" class="primary" type="button">開啟玩家提示</button>
+          <button id="btnTutorialOpenRules" class="ghost" type="button">玩法摘要</button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="publicStatusDialog" class="release-dialog">
+      <div class="dialog-body release-body">
+        <button id="closePublicStatus" class="close" type="button">×</button>
+        <p class="eyebrow">公開版狀態</p>
+        <h2>部署與分享檢查</h2>
+        <p class="hint">這裡可快速確認目前網址、PWA、快取、本機儲存、Firebase 與房間狀態。若朋友遇到問題，可複製這份狀態報告給你排查。</p>
+        <div id="publicStatusList" class="diag-grid"></div>
+        <div class="button-row dialog-actions">
+          <button id="btnCopyPublicStatus" class="ghost" type="button">複製狀態報告</button>
+          <button id="btnCopyPublicLinkInDialog" class="ghost" type="button">複製公開網址</button>
+          <button id="btnClearPwaCachePublic" class="ghost" type="button">清除舊快取</button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="shareKitDialog" class="share-kit-dialog">
+      <div class="dialog-body share-kit-body">
+        <button id="closeShareKit" class="close" type="button">×</button>
+        <p class="eyebrow">分享素材</p>
+        <h2>複製給朋友或放到狐狸首頁</h2>
+        <div class="share-kit-grid">
+          <article>
+            <h3>短版邀請</h3>
+            <textarea id="shareKitShort" readonly></textarea>
+            <button class="ghost" type="button" data-share-copy="short">複製短版</button>
+          </article>
+          <article>
+            <h3>完整介紹</h3>
+            <textarea id="shareKitLong" readonly></textarea>
+            <button class="ghost" type="button" data-share-copy="long">複製介紹</button>
+          </article>
+          <article>
+            <h3>狐狸首頁素材</h3>
+            <textarea id="shareKitFox" readonly></textarea>
+            <button class="ghost" type="button" data-share-copy="fox">複製 HTML</button>
+          </article>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="rulesDialog">
+      <div class="dialog-body">
+        <button id="closeRules" class="close">×</button>
+        <h2>玩法摘要</h2>
+        <p>本版採台灣常見 54 張、5 人各 10 張、4 張底牌；A/K/Q/J 是「頭／娃娃牌」共 16 張。叫牌改為「數字＋花色」（例如 10 黑桃、11 紅心），同數字依橋牌花色大小 ♣ < ♦ < ♥ < ♠ 比較；最高叫品後其他 4 家都 Pass，叫品者成為拿破崙，該花色即為王牌，換底牌後指定秘書牌。</p>
+        <ul>
+          <li>秘書牌最大；其後為大鬼、小鬼、王牌、首引花色。</li>
+          <li>可選擇「末三輪鬼牌變小」與「前三輪王牌 2/3 召鬼」。</li>
+          <li>多人版採房主瀏覽器作為牌局主持端；休閒對戰可用，正式反作弊需改用 Cloud Functions 或自架伺服器。</li>
+        </ul>
+      </div>
+    </dialog>
+
+    <div id="resultOverlay" class="result-overlay hidden" aria-live="polite" aria-modal="true" role="dialog">
+      <div class="result-fx" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="result-card">
+        <p class="eyebrow">本局結果</p>
+        <h2 id="resultTitle">勝利！</h2>
+        <p id="resultSubtitle" class="result-subtitle"></p>
+        <div id="resultStats" class="result-stats"></div>
+        <div class="result-buttons">
+          <button id="resultReplay" class="ghost" type="button">牌局回放</button>
+          <button id="resultClose" class="primary">繼續</button>
+        </div>
+      </div>
+    </div>
+
+    <dialog id="replayDialog" class="replay-dialog">
+      <div class="dialog-body replay-body">
+        <button id="closeReplay" class="close">×</button>
+        <h2>牌局回放</h2>
+        <p id="replaySummary" class="hint"></p>
+        <div class="button-row replay-actions"><button id="btnShareReplay" class="ghost" type="button">分享回放摘要</button></div>
+        <div id="replayList" class="replay-list"></div>
+      </div>
+    </dialog>
+
+    <div id="updateBanner" class="update-banner hidden" role="status" aria-live="polite">
+      <span>有新版可用，重新載入後即可更新。</span>
+      <div>
+        <button id="btnReloadUpdate" class="primary" type="button">重新載入</button>
+        <button id="btnDismissUpdate" class="ghost" type="button">稍後</button>
+      </div>
+    </div>
+
+    <footer id="versionFooter" class="version-footer"></footer>
+    <div id="toast" class="toast hidden"></div>
+  </div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

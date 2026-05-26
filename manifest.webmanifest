@@ -1,0 +1,15 @@
+{
+  "name": "拿破崙與秘書｜狐狸網路遊戲之家",
+  "short_name": "拿破崙與秘書",
+  "description": "台式拿破崙與秘書單人離線與 Firebase 多人對戰。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#eef9fb",
+  "theme_color": "#087ea4",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

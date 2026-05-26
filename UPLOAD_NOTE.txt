@@ -1,0 +1,24 @@
+napoleon3 GitHub Pages clean upload package
+
+Keep/upload these files only:
+- index.html
+- app.js
+- style.css
+- manifest.webmanifest
+- service-worker.js
+- icons/icon-192.png
+- icons/icon-512.png
+- .nojekyll
+
+Do NOT upload these public-site unnecessary files:
+- database.rules.json
+- database.rules.secure.example.json
+- firebase-config.json
+- firebase-config.example.json
+- FIREBASE_SECURITY_AND_MAINTENANCE.md
+- GUIDE_SHARE_BACKUP.md
+- LOCAL_STATS_AND_ACCESSIBILITY.md
+- PUBLIC_RELEASE_CHECKLIST.md
+- V34_PUBLIC_START_SUPPORT.md through V40_NAPOLEON_TEAM_HEADS_FIX.md
+
+Firebase Realtime Database rules should be saved locally and pasted/deployed in Firebase Console, not served as a GitHub Pages static file.
